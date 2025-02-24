@@ -26,7 +26,7 @@ function App() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://ex1-model-pythonanywhere-production.up.railway.app/', {
+      const response = await fetch('http://127.0.0.1:5000/', {
         method: 'POST',
         body: formData,
       });
