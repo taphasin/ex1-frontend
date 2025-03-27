@@ -28,7 +28,7 @@ function App() {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://test-733974772974.southamerica-west1.run.app', {
+      const response = await fetch('https://test2-733974772974.southamerica-west1.run.app', {
         method: 'POST',
         body: formData,
       });
@@ -86,6 +86,8 @@ function App() {
         </div>
       )}
     </div>
+
+    
   );
 }
 
