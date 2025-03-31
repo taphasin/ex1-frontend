@@ -5,13 +5,229 @@
     <link rel="icon" type="image/svg+xml" href="/ex1-frontend/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React</title>
-    <script type="module" crossorigin src="/ex1-frontend/assets/index-2ruvjkUf.js"></script>
-    <link rel="stylesheet" crossorigin href="/ex1-frontend/assets/index-Cu90Z5uF.css">
+    <style>
+      /* Styling for the square addition layout */
+      .container {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        position: relative;
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+      }
+
+      .square {
+        width: 50px;
+        height: 50px;
+        background-color: lightblue;
+        border: 1px solid black;
+      }
+
+      .line {
+        position: absolute;
+        height: 2px;
+        background-color: black;
+        top: 50%;
+      }
+
+      /* Styling for the buttons */
+      button {
+        margin: 5px;
+        padding: 0;
+        font-size: 24px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        background-color: lightgray; /* Grey background color */
+        border: 1px solid #ccc;
+        transition: background-color 0.3s ease;
+      }
+
+      /* Grey color for + and - buttons */
+      button.grey {
+        background-color: grey;
+        color: white;
+      }
+
+      /* Hover effect for the buttons */
+      button:hover {
+        background-color: #ddd;
+      }
+
+      /* Hover effect for grey buttons */
+      button.grey:hover {
+        background-color: #999;
+      }
+    </style>
+    <script type="module" crossorigin src="/ex1-frontend/assets/index-ChDbH0ue.js"></script>
+    <link rel="stylesheet" crossorigin href="/ex1-frontend/assets/index-BL4iKbm-.css">
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Control buttons for columns -->
+    <div id="controlRow">
+      <button id="addColumn" class="grey">+</button>
+      <button id="removeColumn" class="grey">-</button>
+    </div>
+
+    <!-- Container for square columns -->
+    <div class="container" id="container">
+      <!-- Columns with squares will be dynamically added here -->
+    </div>
+
+
+    <script>
+      // JavaScript to manage the square columns and squares logic
+      const container = document.getElementById('container');
+      const addColumnButton = document.getElementById('addColumn');
+      const removeColumnButton = document.getElementById('removeColumn');
+
+      // Function to update the squares in each column and add lines between columns
+      function updateSquares() {
+        const columns = container.querySelectorAll('.column');
+        const maxSquares = Math.max(...Array.from(columns).map(col => col.querySelectorAll('.square').length));
+
+        // Remove any existing lines between columns
+        const lines = container.querySelectorAll('.line');
+        lines.forEach(line => line.remove());
+
+        // Create lines between squares in adjacent columns
+        for (let i = 0; i < maxSquares; i++) {
+          for (let j = 0; j < columns.length - 1; j++) {
+            const square1 = columns[j].querySelectorAll('.square')[i];
+            const square2 = columns[j + 1].querySelectorAll('.square')[i];
+
+            if (square1 && square2) {
+              const line = document.createElement('div');
+              line.classList.add('line');
+              const topPosition = (i * 60) + 25 + 59;
+              line.style.top = `${topPosition}px`;
+              line.style.left = `${columns[j].offsetLeft + 25 + 55}px`;
+              line.style.width = `${columns[j + 1].offsetLeft - columns[j].offsetLeft - 50}px`;
+              container.appendChild(line);
+            }
+          }
+        }
+
+        // Disable the "Add Column" button if there are already 6 columns
+        const columnsCount = container.querySelectorAll('.column').length;
+        addColumnButton.disabled = columnsCount >= 6;
+      }
+
+      // Function to create a column with + and - buttons, and a square
+      function createColumn() {
+        const column = document.createElement('div');
+        column.classList.add('column');
+
+        // Create the + button
+        const addButton = document.createElement('button');
+        addButton.textContent = '+';
+        addButton.addEventListener('click', () => addSquare(column));
+
+        // Create the - button
+        const minusButton = document.createElement('button');
+        minusButton.textContent = '-';
+        minusButton.addEventListener('click', () => removeSquare(column));
+
+        // Create the initial square and place it below the buttons
+        const square = document.createElement('div');
+        square.classList.add('square');
+
+        // Add the buttons and the square to the column
+        const buttonRow = document.createElement('div');
+        buttonRow.style.display = 'flex';
+        buttonRow.style.gap = '10px';
+
+        buttonRow.appendChild(addButton); 
+        buttonRow.appendChild(minusButton); 
+
+        column.appendChild(buttonRow);
+        column.appendChild(square);
+
+        container.appendChild(column);
+        updateSquares();
+      }
+
+      // Function to add a square to a specific column
+      function addSquare(column) {
+        const square = document.createElement('div');
+        square.classList.add('square');
+        column.appendChild(square);
+        updateSquares();
+      }
+
+      // Function to remove a square from a specific column
+      function removeSquare(column) {
+        const squares = column.querySelectorAll('.square');
+        if (squares.length > 1) {
+          column.removeChild(squares[squares.length - 1]);
+        }
+        updateSquares();
+      }
+
+      // Function to add a new column
+      function addColumn() {
+        createColumn();
+      }
+
+      // Function to remove the last column
+      function removeColumn() {
+        const columns = container.querySelectorAll('.column');
+        if (columns.length > 1) {
+          columns[columns.length - 1].remove();
+          updateSquares();
+        }
+      }
+
+      // Event listeners for the column control buttons
+      addColumnButton.addEventListener('click', addColumn);
+      removeColumnButton.addEventListener('click', removeColumn);
+
+      // Initialize with 3 columns, each with 1 square
+      for (let i = 0; i < 3; i++) {
+        createColumn();
+      }
+
+      // Update squares after the initial load
+      updateSquares();
+    </script>
   </body>
   <script>
-    (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="jTHRebkhPTJcP0ObvkhCx";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
+    (function() {
+      if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+        window.chatbase = (...arguments) => {
+          if (!window.chatbase.q) { window.chatbase.q = [] }
+          window.chatbase.q.push(arguments)
+        };
+        window.chatbase = new Proxy(window.chatbase, {
+          get(target, prop) {
+            if (prop === "q") { return target.q }
+            return (...args) => target(prop, ...args)
+          }
+        });
+      }
+      const onLoad = function() {
+        const script = document.createElement("script");
+        script.src = "https://www.chatbase.co/embed.min.js";
+        script.id = "jTHRebkhPTJcP0ObvkhCx";
+        script.domain = "www.chatbase.co";
+        document.body.appendChild(script);
+      };
+      if (document.readyState === "complete") {
+        onLoad();
+      } else {
+        window.addEventListener("load", onLoad);
+      }
+    })();
   </script>
 </html>
